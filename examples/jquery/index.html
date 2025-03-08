@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GebetaMap Demo</title>
+    <style>
+        #map-container {
+            width: 100%;
+            height: 100vh;
+        }
+        .gebeta-marker {
+            background-color: #FF0000;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .gebeta-polyline {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="map-container"></div>
+
+    <!-- Add these dependencies --> 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src='https://unpkg.com/gebeta-gl@latest/dist/gebeta-gl.js'></script>
+    <link href='https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.css' rel='stylesheet' />
+    <!-- typically you would do the import from the dist folder of the npm package -->
+    <!-- <script src="https://unpkg.com/@gebeta/tiles@latest/dist/gebetaMap.bundle.js"></script> -->
+    <!-- but for this example we will use the script from the local dist folder -->
+    <script src="../../dist/gebetaMap.bundle.js"></script>
+    <script src="config.js"></script>
+
+    <script>
+        $(document).ready(async function() {
+            const config = await loadConfig();
+            const container = document.getElementById('map-container');
+            const root = ReactDOM.createRoot(container);
+            
+            const markers = [
+                {
+                    lngLat: [38.7578, 8.9806],
+                    popup: "Meskel Square",
+                    icon: 'marker'
+                },
+                {
+                    lngLat: [38.7600, 8.9850],
+                    popup: "Bole Area",
+                    icon: 'marker'
+                },
+                {
+                    lngLat: [38.7489, 8.9773],
+                    popup: "National Museum",
+                    icon: 'marker'
+                },
+                {
+                    lngLat: [38.7633, 8.9807],
+                    popup: "Bole International Airport",
+                    icon: 'marker'
+                },
+                {
+                    lngLat: [38.7516, 8.9946],
+                    popup: "Unity Park",
+                    icon: 'marker'
+                },
+                {
+                    lngLat: [38.7755, 8.9829],
+                    popup: "Bole Medhanialem",
+                    icon: 'marker'
+                },
+                {
+                    lngLat: [38.7611, 8.9896],
+                    popup: "Edna Mall",
+                    icon: 'marker'
+                },
+                {
+                    lngLat: [38.7492, 8.9865],
+                    popup: "National Palace",
+                    icon: 'marker'
+                }
+            ];
+
+            const polylineCoords = [
+                [38.7578, 8.9806],
+                [38.7633, 8.9807],
+                [38.7755, 8.9829],
+                [38.7611, 8.9896],
+                [38.7578, 8.9806]
+            ];
+
+            const mapElement = React.createElement(
+                GebetaMap.GebetaMap,
+                {
+                    apiKey: config.GEBETA_API_KEY,
+                    center: [38.7578, 8.9806],
+                    zoom: 13,
+                    style: 'gebeta_basic',
+                    className: 'map-container'
+                },
+                markers.map((marker, index) =>
+                    React.createElement(GebetaMap.MapMarker, {
+                        key: `marker-${index}`,
+                        id: `marker-${index}`,
+                        lngLat: marker.lngLat,
+                        color: '#FF0000',
+                        onClick: () => console.log(`Marker ${index} clicked!`)
+                    })
+                ).concat([
+                    React.createElement(GebetaMap.MapPolyline, {
+                        key: 'route',
+                        id: 'route',
+                        coordinates: polylineCoords,
+                        color: '#FF0000',
+                        width: 3
+                    })
+                ])
+            );
+            
+            root.render(mapElement);
+        });
+    </script>
+</body>
+</html>
