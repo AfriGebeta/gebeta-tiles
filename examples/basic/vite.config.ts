@@ -8,10 +8,7 @@ export default defineConfig({
     open: true
   },
   resolve: {
-    preserveSymlinks: true,
-    alias: {
-      '@gebeta/tiles': '../../src'
-    }
+    preserveSymlinks: true
   },
   optimizeDeps: {
     include: ['@gebeta/tiles']
