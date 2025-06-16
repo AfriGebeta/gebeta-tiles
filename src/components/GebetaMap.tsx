@@ -8,6 +8,7 @@ import basicStyle from '../styles/basic.json';
 import gebetaLightStyle from '../styles/gebeta_light.json';
 import modernStyle from '../styles/modern.json';
 import { MAP_TILE_URL } from '../../constants';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 const GebetaMap: React.FC<MapConfig> = ({
   apiKey,
