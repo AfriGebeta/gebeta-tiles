@@ -29,98 +29,78 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <link href='https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.css' rel='stylesheet' />
     <!-- typically you would do the import from the dist folder of the npm package -->
-    <!-- <script src="https://unpkg.com/@gebeta/tiles@latest/dist/gebetaMap.bundle.js"></script> -->
+     <script src="https://unpkg.com/@gebeta/tiles@latest/dist/gebetaMap.bundle.js"></script>
     <!-- but for this example we will use the script from the local dist folder -->
-    <script src="../../dist/gebetaMap.bundle.js"></script>
+<!--    <script src="../../dist/gebetaMap.bundle.js"></script>-->
     <script src="config.js"></script>
 
     <script>
-        $(document).ready(async function() {
+        async function main() {
             const config = await loadConfig();
             const container = document.getElementById('map-container');
             const root = ReactDOM.createRoot(container);
-            
-            const markers = [
-                {
-                    lngLat: [38.7578, 8.9806],
-                    popup: "Meskel Square",
-                    icon: 'marker'
-                },
-                {
-                    lngLat: [38.7600, 8.9850],
-                    popup: "Bole Area",
-                    icon: 'marker'
-                },
-                {
-                    lngLat: [38.7489, 8.9773],
-                    popup: "National Museum",
-                    icon: 'marker'
-                },
-                {
-                    lngLat: [38.7633, 8.9807],
-                    popup: "Bole International Airport",
-                    icon: 'marker'
-                },
-                {
-                    lngLat: [38.7516, 8.9946],
-                    popup: "Unity Park",
-                    icon: 'marker'
-                },
-                {
-                    lngLat: [38.7755, 8.9829],
-                    popup: "Bole Medhanialem",
-                    icon: 'marker'
-                },
-                {
-                    lngLat: [38.7611, 8.9896],
-                    popup: "Edna Mall",
-                    icon: 'marker'
-                },
-                {
-                    lngLat: [38.7492, 8.9865],
-                    popup: "National Palace",
-                    icon: 'marker'
-                }
+
+            // Global markers array (not React state)
+            let markers = [
+                { lngLat: [38.7578, 8.9806], popup: "Meskel Square", icon: 'marker' },
+                { lngLat: [38.7600, 8.9850], popup: "Bole Area", icon: 'marker' },
+                // ... other markers
             ];
 
             const polylineCoords = [
-                [38.7578, 8.9806],
-                [38.7633, 8.9807],
-                [38.7755, 8.9829],
-                [38.7611, 8.9896],
-                [38.7578, 8.9806]
             ];
 
-            const mapElement = React.createElement(
-                GebetaMap.GebetaMap,
-                {
-                    apiKey: config.GEBETA_API_KEY,
-                    center: [38.7578, 8.9806],
-                    zoom: 13,
-                    style: 'gebeta_basic',
-                    className: 'map-container'
-                },
-                markers.map((marker, index) =>
-                    React.createElement(GebetaMap.MapMarker, {
-                        key: `marker-${index}`,
-                        id: `marker-${index}`,
-                        lngLat: marker.lngLat,
-                        color: '#FF0000',
-                        onClick: () => console.log(`Marker ${index} clicked!`)
-                    })
-                ).concat([
-                    React.createElement(GebetaMap.MapPolyfill, {
-                        key: 'route',
-                        id: 'route',
-                        coordinates: polylineCoords,
-                        color: '#FF0000',
-                        width: 3
-                    })
-                ])
-            );
-            
-            root.render(mapElement);
+            // Function to build and render the map
+            function renderMap() {
+                const mapElement = React.createElement(
+                    GebetaMap.GebetaMap,
+                    {
+                        apiKey: config.GEBETA_API_KEY,
+                        center: [38.7578, 8.9806],
+                        zoom: 13,
+                        style: 'gebeta_basic',
+                        className: 'map-container',
+                        onMapClick: (event) => {
+                            markers.push({
+                                lngLat: event.lngLat,
+                                popup: `New Marker at ${event.lngLat}`,
+                                icon: 'marker'
+                            });
+
+                            polylineCoords.push(event.lngLat);
+                            renderMap(); // re-render with new marker
+                        }
+                    },
+                    markers.map((marker, index) =>
+                        React.createElement(GebetaMap.MapMarker, {
+                            key: `marker-${index}`,
+                            id: `marker-${index}`,
+                            lngLat: marker.lngLat,
+                            color: '#FF0000',
+                            onClick: () => console.log(`Marker ${index} clicked!`)
+                        })
+                    ).concat([
+                        React.createElement(GebetaMap.MapPolyfill, {
+                            key: 'route',
+                            id: 'route',
+                            coordinates: polylineCoords,
+                            color: '#FF0000',
+                            width: 3
+                        })
+                    ])
+                );
+
+                root.render(mapElement);
+            }
+
+            // Initial render
+            renderMap();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            main();
         });
     </script>
+
 </body>
 </html>
