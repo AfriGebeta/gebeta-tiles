@@ -1,6 +1,6 @@
 {
   "name": "@gebeta/tiles",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "private": false,
   "description": "React components for Gebeta Maps tiles",
   "main": "dist/src/index.js",
@@ -14,7 +14,7 @@
   "scripts": {
     "build:cjs": "tsc",
     "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "yarn build:cjs && yarn build:esm && cp -r src/styles dist/",
+    "build": "yarn build:cjs && yarn build:esm && cp -r src/styles dist/ && yarn bundle",
     "bundle": "webpack --mode production",
     "test": "jest",
     "test:watch": "jest --watch",
