@@ -36,11 +36,15 @@ export type MarkerData = {
   popup?: maplibregl.Popup;
 };
 
-const GebetaMap = forwardRef<GebetaMapRef, GebetaMapProps>(
+const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
   ({ apiKey, center, zoom, onMapClick, style }, ref) => {
     console.log('GebetaMap rendered');
     const mapContainer = useRef<HTMLDivElement | null>(null);
     const gebetaMapsInstance = useRef<GebetaMaps | null>(null);
+
+    // Memoize center and style props internally to ensure stability
+    const stableCenter = useMemo(() => center, [JSON.stringify(center)]);
+    const stableStyle = useMemo(() => style, [JSON.stringify(style || {})]);
 
     useImperativeHandle(ref, () => ({
       addImageMarker: (...args) => gebetaMapsInstance.current!.addImageMarker(...args),
@@ -71,7 +75,7 @@ const GebetaMap = forwardRef<GebetaMapRef, GebetaMapProps>(
       gebetaMapsInstance.current = new GebetaMaps({ apiKey });
       const map = gebetaMapsInstance.current.init({
         container: mapContainer.current,
-        center,
+        center: stableCenter,
         zoom,
       });
       gebetaMapsInstance.current.addNavigationControls();
@@ -85,7 +89,7 @@ const GebetaMap = forwardRef<GebetaMapRef, GebetaMapProps>(
         gebetaMapsInstance.current?.remove();
         gebetaMapsInstance.current = null;
       };
-    }, [apiKey, center, zoom, stableOnMapClick]);
+    }, [apiKey, stableCenter, zoom, stableOnMapClick]);
 
     if (!apiKey || apiKey.trim() === "") {
       return (
@@ -98,12 +102,14 @@ const GebetaMap = forwardRef<GebetaMapRef, GebetaMapProps>(
     return (
       <div
         ref={mapContainer}
-        style={{ width: "100%", height: "100%", ...style }}
+        style={{ width: "100%", height: "100%", ...stableStyle }}
         data-testid="gebeta-map-container"
       />
     );
   }
 );
+
+const GebetaMap = React.memo(GebetaMapImpl);
 
 export default GebetaMap;
 

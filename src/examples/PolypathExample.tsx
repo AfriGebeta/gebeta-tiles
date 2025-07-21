@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import GebetaMap, { GebetaMapRef } from "src/lib/GebetaMap";
 
 const markerIcon = (color: string) => {
@@ -18,6 +18,7 @@ const PolypathExample: React.FC = () => {
   const endPointRef = useRef<[number, number] | null>(null);
   const startMarkerRef = useRef<any>(null);
   const endMarkerRef = useRef<any>(null);
+  const [counter, setCounter] = useState(0);
 
   // Handle map click: set start, then end, then draw path
   const handleMapClick = (lngLat: [number, number]) => {
@@ -62,6 +63,8 @@ const PolypathExample: React.FC = () => {
     startMarkerRef.current = null;
     endMarkerRef.current = null;
   };
+
+  console.log('PolypathExample rendered, counter:', counter);
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative", background: "#f8fafc" }}>
@@ -108,6 +111,21 @@ const PolypathExample: React.FC = () => {
             }}
           >
             Clear
+          </button>
+          <button
+            onClick={() => setCounter(c => c + 1)}
+            style={{
+              background: '#2563eb',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 6,
+              padding: '8px 18px',
+              fontWeight: 500,
+              cursor: 'pointer',
+              marginBottom: 6
+            }}
+          >
+            Increment Counter ({counter})
           </button>
         </div>
       </div>
