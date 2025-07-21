@@ -1,6 +1,7 @@
 import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Map as MapLibreMap } from "maplibre-gl";
+import FenceManager, { Fence, FencePoint } from "src/lib/FenceManager";
 
 declare type MapMethods = {
     [key: string]: any;
@@ -16,6 +17,7 @@ export class GebetaMaps {
     private gebetaMaps: (maplibregl.Map & MapMethods) | null = null;
     private apiKey: string;
     private markerList: maplibregl.Marker[] = [];
+    private fenceManager: FenceManager | null = null;
 
 
 
@@ -107,7 +109,8 @@ export class GebetaMaps {
 
         this.addGebetaLogo();
         this.addAttribution();
-
+        // Initialize FenceManager
+        this.fenceManager = new FenceManager(this.gebetaMaps);
         return this.gebetaMaps;
     }
 
@@ -222,6 +225,63 @@ export class GebetaMaps {
      */
     public getMarkers(): maplibregl.Marker[] {
         return [...this.markerList];
+    }
+
+    /** Start drawing mode for a new fence. */
+    public startFence() {
+        if (!this.fenceManager) throw new Error("FenceManager not initialized");
+        this.fenceManager.startFenceDrawing();
+    }
+
+    /** Add a point to the current fence. */
+    public addFencePoint(
+        lngLat: FencePoint,
+        customImage: string | null = null,
+        onClick: ((lngLat: FencePoint, marker: maplibregl.Marker, event: MouseEvent) => void) | null = null
+    ) {
+        if (!this.fenceManager) throw new Error("FenceManager not initialized");
+        this.fenceManager.addFencePoint(
+            lngLat,
+            customImage,
+            onClick,
+            (lngLat, imageUrl, size, onClickCb) => this.addImageMarker(lngLat, imageUrl, size, onClickCb)
+        );
+    }
+
+    /** Close the current fence. */
+    public closeFence() {
+        if (!this.fenceManager) throw new Error("FenceManager not initialized");
+        this.fenceManager.closeFence();
+    }
+
+    /** Clear the current fence. */
+    public clearFence() {
+        if (!this.fenceManager) throw new Error("FenceManager not initialized");
+        this.fenceManager.clearFence();
+    }
+
+    /** Clear all fences. */
+    public clearAllFences() {
+        if (!this.fenceManager) throw new Error("FenceManager not initialized");
+        this.fenceManager.clearAllFences();
+    }
+
+    /** Get all stored fences. */
+    public getFences(): Fence[] {
+        if (!this.fenceManager) throw new Error("FenceManager not initialized");
+        return this.fenceManager.getFences();
+    }
+
+    /** Get the current fence points. */
+    public getFencePoints(): FencePoint[] {
+        if (!this.fenceManager) throw new Error("FenceManager not initialized");
+        return this.fenceManager.getFencePoints();
+    }
+
+    /** Returns true if currently in drawing mode. */
+    public isDrawingFence(): boolean {
+        if (!this.fenceManager) throw new Error("FenceManager not initialized");
+        return this.fenceManager.isDrawingFence();
     }
 
     public remove(): void {

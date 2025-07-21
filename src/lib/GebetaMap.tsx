@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useImperativeHandle, forwardRef, useMemo } from "react";
 import { GebetaMaps } from "src/lib/GebetaMaps";
 import type * as maplibregl from "maplibre-gl";
+import type { Fence, FencePoint } from "src/lib/FenceManager";
 
 export type GebetaMapRef = {
   addImageMarker: GebetaMaps["addImageMarker"];
@@ -8,6 +9,15 @@ export type GebetaMapRef = {
   clearMarkers: GebetaMaps["clearAllMarkers"];
   getMarkers: GebetaMaps["getMarkers"];
   getMapInstance: () => maplibregl.Map | null;
+  // Fence management
+  startFence: () => void;
+  addFencePoint: GebetaMaps["addFencePoint"];
+  closeFence: () => void;
+  clearFence: () => void;
+  clearAllFences: () => void;
+  getFences: () => Fence[];
+  getFencePoints: () => FencePoint[];
+  isDrawingFence: () => boolean;
 };
 
 export interface GebetaMapProps {
@@ -26,6 +36,7 @@ export type MarkerData = {
 
 const GebetaMap = forwardRef<GebetaMapRef, GebetaMapProps>(
   ({ apiKey, center, zoom, onMapClick, style }, ref) => {
+    console.log('GebetaMap rendered');
     const mapContainer = useRef<HTMLDivElement | null>(null);
     const gebetaMapsInstance = useRef<GebetaMaps | null>(null);
 
@@ -35,6 +46,15 @@ const GebetaMap = forwardRef<GebetaMapRef, GebetaMapProps>(
       clearMarkers: () => gebetaMapsInstance.current!.clearAllMarkers(),
       getMarkers: () => gebetaMapsInstance.current!.getMarkers(),
       getMapInstance: () => gebetaMapsInstance.current ? (gebetaMapsInstance.current as any).gebetaMaps : null,
+      // Fence management
+      startFence: () => gebetaMapsInstance.current!.startFence(),
+      addFencePoint: (...args) => gebetaMapsInstance.current!.addFencePoint(...args),
+      closeFence: () => gebetaMapsInstance.current!.closeFence(),
+      clearFence: () => gebetaMapsInstance.current!.clearFence(),
+      clearAllFences: () => gebetaMapsInstance.current!.clearAllFences(),
+      getFences: () => gebetaMapsInstance.current!.getFences(),
+      getFencePoints: () => gebetaMapsInstance.current!.getFencePoints(),
+      isDrawingFence: () => gebetaMapsInstance.current!.isDrawingFence(),
     }), []);
 
     // Memoize the click handler so it doesn't trigger effect re-runs
@@ -84,4 +104,5 @@ const GebetaMap = forwardRef<GebetaMapRef, GebetaMapProps>(
 export default GebetaMap;
 
 // Re-export maplibregl types for library consumers
-export type { Map as MapLibreMap, Marker, Popup, MapMouseEvent } from "maplibre-gl"; 
+export type { Map as MapLibreMap, Marker, Popup, MapMouseEvent } from "maplibre-gl";
+export type { Fence, FencePoint }; 
