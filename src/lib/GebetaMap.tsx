@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useImperativeHandle, forwardRef, useMemo } fr
 import { GebetaMaps } from "src/lib/GebetaMaps";
 import type * as maplibregl from "maplibre-gl";
 import type { Fence, FencePoint } from "src/lib/FenceManager";
+import type { ClusteringOptions } from "src/lib/ClusteringManager";
 
 export type GebetaMapRef = {
   addImageMarker: GebetaMaps["addImageMarker"];
@@ -20,6 +21,11 @@ export type GebetaMapRef = {
   isDrawingFence: () => boolean;
   addPath: GebetaMaps["addPath"];
   clearPaths: GebetaMaps["clearPaths"];
+  addClusteredMarker: GebetaMaps["addClusteredMarker"];
+  clearClusteredMarkers: GebetaMaps["clearClusteredMarkers"];
+  updateClustering: GebetaMaps["updateClustering"];
+  setClusteringEnabled: GebetaMaps["setClusteringEnabled"];
+  setClusterImage: GebetaMaps["setClusterImage"];
 };
 
 export interface GebetaMapProps {
@@ -28,6 +34,7 @@ export interface GebetaMapProps {
   zoom: number;
   onMapClick?: (lngLat: [number, number], event: maplibregl.MapMouseEvent) => void;
   style?: React.CSSProperties;
+  clusteringOptions?: ClusteringOptions;
 }
 
 // Type for the marker object returned by addImageMarker
@@ -37,7 +44,7 @@ export type MarkerData = {
 };
 
 const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
-  ({ apiKey, center, zoom, onMapClick, style }, ref) => {
+  ({ apiKey, center, zoom, onMapClick, style, clusteringOptions }, ref) => {
     console.log('GebetaMap rendered');
     const mapContainer = useRef<HTMLDivElement | null>(null);
     const gebetaMapsInstance = useRef<GebetaMaps | null>(null);
@@ -63,6 +70,11 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
       isDrawingFence: () => gebetaMapsInstance.current!.isDrawingFence(),
       addPath: (...args) => gebetaMapsInstance.current!.addPath(...args),
       clearPaths: () => gebetaMapsInstance.current!.clearPaths(),
+      addClusteredMarker: (...args) => gebetaMapsInstance.current!.addClusteredMarker(...args),
+      clearClusteredMarkers: () => gebetaMapsInstance.current!.clearClusteredMarkers(),
+      updateClustering: () => gebetaMapsInstance.current!.updateClustering(),
+      setClusteringEnabled: (enabled) => gebetaMapsInstance.current!.setClusteringEnabled(enabled),
+      setClusterImage: (imageUrl) => gebetaMapsInstance.current!.setClusterImage(imageUrl),
     }), []);
 
     // Memoize the click handler so it doesn't trigger effect re-runs
@@ -77,6 +89,7 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
         container: mapContainer.current,
         center: stableCenter,
         zoom,
+        clusteringOptions,
       });
       gebetaMapsInstance.current.addNavigationControls();
       if (stableOnMapClick) {
@@ -89,7 +102,7 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
         gebetaMapsInstance.current?.remove();
         gebetaMapsInstance.current = null;
       };
-    }, [apiKey, stableCenter, zoom, stableOnMapClick]);
+    }, [apiKey, stableCenter, zoom, stableOnMapClick, clusteringOptions]);
 
     if (!apiKey || apiKey.trim() === "") {
       return (

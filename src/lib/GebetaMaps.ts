@@ -2,6 +2,7 @@ import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Map as MapLibreMap } from "maplibre-gl";
 import FenceManager, { Fence, FencePoint } from "src/lib/FenceManager";
+import ClusteringManager, { ClusteredMarkerData, ClusteringOptions } from "src/lib/ClusteringManager";
 
 declare type MapMethods = {
     [key: string]: any;
@@ -20,6 +21,7 @@ export class GebetaMaps {
     private fenceManager: FenceManager | null = null;
     private pathLayerIds: string[] = [];
     private pathSourceIds: string[] = [];
+    private clusteringManager: ClusteringManager | null = null;
 
 
     constructor({ apiKey, }: GebetaMapsProps) {
@@ -98,7 +100,7 @@ export class GebetaMaps {
     }
 
 
-    public init(options: maplibregl.MapOptions): maplibregl.Map & MapMethods {
+    public init(options: maplibregl.MapOptions & { clusteringOptions?: ClusteringOptions }): maplibregl.Map & MapMethods {
 
         const styleUrl = `https://tiles.gebeta.app/styles/standard/style.json`;
 
@@ -112,6 +114,8 @@ export class GebetaMaps {
         this.addAttribution();
         // Initialize FenceManager
         this.fenceManager = new FenceManager(this.gebetaMaps);
+        // Always initialize ClusteringManager, default to enabled: false if not provided
+        this.clusteringManager = new ClusteringManager(this.gebetaMaps, options.clusteringOptions || { enabled: false });
         return this.gebetaMaps;
     }
 
@@ -347,6 +351,36 @@ export class GebetaMaps {
         });
         this.pathLayerIds = [];
         this.pathSourceIds = [];
+    }
+
+    /** Add a marker to the clustering manager. */
+    public addClusteredMarker(marker: ClusteredMarkerData) {
+        if (!this.clusteringManager) throw new Error("ClusteringManager not initialized");
+        return this.clusteringManager.addMarker(marker);
+    }
+
+    /** Remove all clustered markers. */
+    public clearClusteredMarkers() {
+        if (!this.clusteringManager) throw new Error("ClusteringManager not initialized");
+        this.clusteringManager.clearAllMarkers();
+    }
+
+    /** Manually trigger clustering update. */
+    public updateClustering() {
+        if (!this.clusteringManager) throw new Error("ClusteringManager not initialized");
+        this.clusteringManager.updateClustering();
+    }
+
+    /** Enable or disable clustering at runtime. */
+    public setClusteringEnabled(enabled: boolean) {
+        if (!this.clusteringManager) throw new Error("ClusteringManager not initialized");
+        this.clusteringManager.setEnabled(enabled);
+    }
+
+    /** Set the cluster image at runtime. */
+    public setClusterImage(imageUrl: string) {
+        if (!this.clusteringManager) throw new Error("ClusteringManager not initialized");
+        this.clusteringManager.setClusterImage(imageUrl);
     }
 
     public remove(): void {

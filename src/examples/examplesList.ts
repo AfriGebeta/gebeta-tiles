@@ -1,6 +1,7 @@
 import CustomMarkersExample from "src/examples/CustomMarkersExample";
 import FenceExample from "src/examples/FenceExample";
 import PolypathExample from "src/examples/PolypathExample";
+import ClusteringExample from "src/examples/ClusteringExample";
 
 export const examples = [
   {
@@ -17,5 +18,10 @@ export const examples = [
     title: "Polypath Example",
     description: "Draw a path between two points you select on the map.",
     component: PolypathExample,
+  },
+  {
+    title: "Marker Clustering Example",
+    description: "Add random markers and see them cluster as you zoom out.",
+    component: ClusteringExample,
   },
 ]; 
