@@ -1,11 +1,14 @@
 {
-  "name": "mapprojecttest",
-  "private": true,
+  "name": "@gebeta/tiles",
   "version": "0.0.0",
   "type": "module",
+  "main": "dist/lib/GebetaMap.js",
+  "module": "dist/lib/GebetaMap.js",
+  "types": "dist/lib/GebetaMap.d.ts",
+  "files": ["dist"],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc --project tsconfig.json",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "yarn jest"
@@ -15,6 +18,11 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "supercluster": "^8.0.1"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "maplibre-gl": ">=5"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

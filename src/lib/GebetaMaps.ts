@@ -1,10 +1,10 @@
 import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Map as MapLibreMap } from "maplibre-gl";
-import FenceManager, { Fence, FencePoint } from "src/lib/FenceManager";
-import ClusteringManager, { ClusteredMarkerData, ClusteringOptions } from "src/lib/ClusteringManager";
-import GeocodingManager from "src/lib/GeocodingManager";
-import DirectionsManager from "src/lib/DirectionsManager";
+import FenceManager, { Fence, FencePoint } from "./FenceManager";
+import ClusteringManager, { ClusteredMarkerData, ClusteringOptions } from "./ClusteringManager";
+import GeocodingManager from "./GeocodingManager";
+import DirectionsManager from "./DirectionsManager";
 
 declare type MapMethods = {
     [key: string]: any;

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useImperativeHandle, forwardRef, useMemo } from "react";
-import { GebetaMaps } from "src/lib/GebetaMaps";
+import { GebetaMaps } from "./GebetaMaps";
 import type * as maplibregl from "maplibre-gl";
-import type { Fence, FencePoint } from "src/lib/FenceManager";
-import type { ClusteringOptions } from "src/lib/ClusteringManager";
+import type { Fence, FencePoint } from "./FenceManager";
+import type { ClusteringOptions } from "./ClusteringManager";
 
 export type GebetaMapRef = {
   addImageMarker: GebetaMaps["addImageMarker"];
