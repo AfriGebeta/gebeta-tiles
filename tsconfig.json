@@ -8,14 +8,6 @@
     "jsx": "react-jsx",
     "module": "es2020",
     "moduleResolution": "node",
-    "target": "es2020",
-    "declaration": true,
-    "declarationDir": "./dist",
-    "outDir": "./dist"
-  },
-  "exclude": [
-    "src/examples",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ]
+    "target": "es2020"
+  }
 } 
