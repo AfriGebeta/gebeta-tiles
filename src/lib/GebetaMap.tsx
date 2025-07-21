@@ -18,6 +18,8 @@ export type GebetaMapRef = {
   getFences: () => Fence[];
   getFencePoints: () => FencePoint[];
   isDrawingFence: () => boolean;
+  addPath: GebetaMaps["addPath"];
+  clearPaths: GebetaMaps["clearPaths"];
 };
 
 export interface GebetaMapProps {
@@ -55,6 +57,8 @@ const GebetaMap = forwardRef<GebetaMapRef, GebetaMapProps>(
       getFences: () => gebetaMapsInstance.current!.getFences(),
       getFencePoints: () => gebetaMapsInstance.current!.getFencePoints(),
       isDrawingFence: () => gebetaMapsInstance.current!.isDrawingFence(),
+      addPath: (...args) => gebetaMapsInstance.current!.addPath(...args),
+      clearPaths: () => gebetaMapsInstance.current!.clearPaths(),
     }), []);
 
     // Memoize the click handler so it doesn't trigger effect re-runs

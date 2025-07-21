@@ -18,7 +18,8 @@ export class GebetaMaps {
     private apiKey: string;
     private markerList: maplibregl.Marker[] = [];
     private fenceManager: FenceManager | null = null;
-
+    private pathLayerIds: string[] = [];
+    private pathSourceIds: string[] = [];
 
 
     constructor({ apiKey, }: GebetaMapsProps) {
@@ -282,6 +283,70 @@ export class GebetaMaps {
     public isDrawingFence(): boolean {
         if (!this.fenceManager) throw new Error("FenceManager not initialized");
         return this.fenceManager.isDrawingFence();
+    }
+
+    /**
+     * Add a static polyline (path) to the map.
+     * @param path Array of [lng, lat] coordinates
+     * @param options Path style options
+     */
+    public addPath(
+        path: [number, number][],
+        options?: { color?: string; width?: number; opacity?: number }
+    ): void {
+        if (!this.gebetaMaps) throw new Error("Map not initialized");
+        const color = options?.color || "#007cbf";
+        const width = options?.width || 4;
+        const opacity = options?.opacity || 0.8;
+        const id = `path-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+        // Add source
+        this.gebetaMaps.addSource(id, {
+            type: "geojson",
+            data: {
+                type: "Feature",
+                properties: {},
+                geometry: {
+                    type: "LineString",
+                    coordinates: path,
+                },
+            },
+        });
+        // Add layer
+        this.gebetaMaps.addLayer({
+            id,
+            type: "line",
+            source: id,
+            layout: {
+                "line-join": "round",
+                "line-cap": "round",
+            },
+            paint: {
+                "line-color": color,
+                "line-width": width,
+                "line-opacity": opacity,
+            },
+        });
+        this.pathLayerIds.push(id);
+        this.pathSourceIds.push(id);
+    }
+
+    /**
+     * Remove all polylines (paths) from the map.
+     */
+    public clearPaths(): void {
+        if (!this.gebetaMaps) return;
+        this.pathLayerIds.forEach(id => {
+            if (this.gebetaMaps!.getLayer(id)) {
+                this.gebetaMaps!.removeLayer(id);
+            }
+        });
+        this.pathSourceIds.forEach(id => {
+            if (this.gebetaMaps!.getSource(id)) {
+                this.gebetaMaps!.removeSource(id);
+            }
+        });
+        this.pathLayerIds = [];
+        this.pathSourceIds = [];
     }
 
     public remove(): void {
