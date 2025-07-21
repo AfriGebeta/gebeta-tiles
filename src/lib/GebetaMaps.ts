@@ -3,6 +3,8 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Map as MapLibreMap } from "maplibre-gl";
 import FenceManager, { Fence, FencePoint } from "src/lib/FenceManager";
 import ClusteringManager, { ClusteredMarkerData, ClusteringOptions } from "src/lib/ClusteringManager";
+import GeocodingManager from "src/lib/GeocodingManager";
+import DirectionsManager from "src/lib/DirectionsManager";
 
 declare type MapMethods = {
     [key: string]: any;
@@ -22,6 +24,8 @@ export class GebetaMaps {
     private pathLayerIds: string[] = [];
     private pathSourceIds: string[] = [];
     private clusteringManager: ClusteringManager | null = null;
+    private geocodingManager: GeocodingManager | null = null;
+    private directionsManager: DirectionsManager | null = null;
 
 
     constructor({ apiKey, }: GebetaMapsProps) {
@@ -31,6 +35,7 @@ export class GebetaMaps {
         if (!this.apiKey) {
             console.error("An API key or an access token is required.");
         }
+        this.geocodingManager = new GeocodingManager(this.apiKey);
     }
 
 
@@ -116,6 +121,12 @@ export class GebetaMaps {
         this.fenceManager = new FenceManager(this.gebetaMaps);
         // Always initialize ClusteringManager, default to enabled: false if not provided
         this.clusteringManager = new ClusteringManager(this.gebetaMaps, options.clusteringOptions || { enabled: false });
+        // Initialize DirectionsManager only after map style is loaded
+        if (this.gebetaMaps) {
+            this.gebetaMaps.on('load', () => {
+                this.directionsManager = new DirectionsManager(this.gebetaMaps!, this.apiKey);
+            });
+        }
         return this.gebetaMaps;
     }
 
@@ -381,6 +392,41 @@ export class GebetaMaps {
     public setClusterImage(imageUrl: string) {
         if (!this.clusteringManager) throw new Error("ClusteringManager not initialized");
         this.clusteringManager.setClusterImage(imageUrl);
+    }
+
+    // Geocoding
+    public async geocode(name: string) {
+        if (!this.geocodingManager) throw new Error('GeocodingManager not initialized');
+        return this.geocodingManager.geocode(name);
+    }
+    public async reverseGeocode(lat: number, lon: number) {
+        if (!this.geocodingManager) throw new Error('GeocodingManager not initialized');
+        return this.geocodingManager.reverseGeocode(lat, lon);
+    }
+    // Directions
+    public async getDirections(origin: { lat: number; lng: number }, destination: { lat: number; lng: number }, options?: any) {
+        if (!this.directionsManager) throw new Error('DirectionsManager not initialized');
+        return this.directionsManager.getDirections(origin, destination, options);
+    }
+    public displayRoute(routeData: any, options?: any) {
+        if (!this.directionsManager) throw new Error('DirectionsManager not initialized');
+        return this.directionsManager.displayRoute(routeData, options);
+    }
+    public clearRoute() {
+        if (!this.directionsManager) throw new Error('DirectionsManager not initialized');
+        return this.directionsManager.clearRoute();
+    }
+    public getCurrentRoute() {
+        if (!this.directionsManager) throw new Error('DirectionsManager not initialized');
+        return this.directionsManager.getCurrentRoute();
+    }
+    public getRouteSummary() {
+        if (!this.directionsManager) throw new Error('DirectionsManager not initialized');
+        return this.directionsManager.getRouteSummary();
+    }
+    public updateRouteStyle(style: { color?: string; width?: number; opacity?: number }) {
+        if (!this.directionsManager) throw new Error('DirectionsManager not initialized');
+        return this.directionsManager.updateRouteStyle(style);
     }
 
     public remove(): void {

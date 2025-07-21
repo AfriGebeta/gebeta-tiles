@@ -2,6 +2,8 @@ import CustomMarkersExample from "src/examples/CustomMarkersExample";
 import FenceExample from "src/examples/FenceExample";
 import PolypathExample from "src/examples/PolypathExample";
 import ClusteringExample from "src/examples/ClusteringExample";
+import GeocodingExample from "src/examples/GeocodingExample";
+import DirectionsExample from "src/examples/DirectionsExample";
 
 export const examples = [
   {
@@ -23,5 +25,14 @@ export const examples = [
     title: "Marker Clustering Example",
     description: "Add random markers and see them cluster as you zoom out.",
     component: ClusteringExample,
+  },{
+      title: "Geocoding Example",
+    description: "Search for places by name or coordinates and see results on the map.",
+    component: GeocodingExample,
+  },
+  {
+    title: "Directions Example",
+    description: "Get directions between two points, view route and step-by-step instructions.",
+    component: DirectionsExample,
   },
 ]; 

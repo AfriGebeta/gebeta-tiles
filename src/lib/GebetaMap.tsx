@@ -26,6 +26,14 @@ export type GebetaMapRef = {
   updateClustering: GebetaMaps["updateClustering"];
   setClusteringEnabled: GebetaMaps["setClusteringEnabled"];
   setClusterImage: GebetaMaps["setClusterImage"];
+  geocode: (...args: Parameters<GebetaMaps["geocode"]>) => Promise<any[]>;
+  reverseGeocode: (...args: Parameters<GebetaMaps["reverseGeocode"]>) => Promise<any[]>;
+  getDirections: (...args: Parameters<GebetaMaps["getDirections"]>) => Promise<any>;
+  displayRoute: (...args: Parameters<GebetaMaps["displayRoute"]>) => void;
+  clearRoute: () => void;
+  getCurrentRoute: () => any;
+  getRouteSummary: () => any;
+  updateRouteStyle: (...args: Parameters<GebetaMaps["updateRouteStyle"]>) => void;
 };
 
 export interface GebetaMapProps {
@@ -75,6 +83,14 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
       updateClustering: () => gebetaMapsInstance.current!.updateClustering(),
       setClusteringEnabled: (enabled) => gebetaMapsInstance.current!.setClusteringEnabled(enabled),
       setClusterImage: (imageUrl) => gebetaMapsInstance.current!.setClusterImage(imageUrl),
+      geocode: (...args) => gebetaMapsInstance.current!.geocode(...args),
+      reverseGeocode: (...args) => gebetaMapsInstance.current!.reverseGeocode(...args),
+      getDirections: (...args) => gebetaMapsInstance.current!.getDirections(...args),
+      displayRoute: (...args) => gebetaMapsInstance.current!.displayRoute(...args),
+      clearRoute: () => gebetaMapsInstance.current!.clearRoute(),
+      getCurrentRoute: () => gebetaMapsInstance.current!.getCurrentRoute(),
+      getRouteSummary: () => gebetaMapsInstance.current!.getRouteSummary(),
+      updateRouteStyle: (...args) => gebetaMapsInstance.current!.updateRouteStyle(...args),
     }), []);
 
     // Memoize the click handler so it doesn't trigger effect re-runs
