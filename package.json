@@ -1,6 +1,6 @@
 {
   "name": "@gebeta/tiles",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "type": "module",
   "main": "dist/lib/GebetaMap.js",
   "module": "dist/lib/GebetaMap.js",
