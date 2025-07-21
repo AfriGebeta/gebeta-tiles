@@ -53,7 +53,6 @@ export type MarkerData = {
 
 const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
   ({ apiKey, center, zoom, onMapClick, style, clusteringOptions }, ref) => {
-    console.log('GebetaMap rendered');
     const mapContainer = useRef<HTMLDivElement | null>(null);
     const gebetaMapsInstance = useRef<GebetaMaps | null>(null);
 

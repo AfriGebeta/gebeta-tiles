@@ -50,7 +50,6 @@ const DirectionsExample: React.FC = () => {
     ref.current = { marker };
     marker.setLngLat([lng, lat]).addTo(mapRef.current.getMapInstance()!);
   };
-  console.log(clickMode)
 
   // Get directions and show route
   const handleGetDirections = async () => {
