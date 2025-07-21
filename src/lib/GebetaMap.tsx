@@ -51,6 +51,28 @@ export type MarkerData = {
   popup?: maplibregl.Popup;
 };
 
+// Error component for missing API key
+const GebetaMapError: React.FC<{ message?: string }> = ({ message }) => (
+  <div style={{
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "#f8d7da",
+    color: "#721c24",
+    borderRadius: 12,
+    fontWeight: 500,
+    fontSize: 18,
+    flexDirection: "column",
+    gap: 8,
+    border: "1px solid #f5c6cb"
+  }}>
+    <span>⚠️ GebetaMap SDK is not set up correctly.</span>
+    <span>{message || "Please provide a valid Gebeta Maps API key."}</span>
+  </div>
+);
+
 const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
   ({ apiKey, center, zoom, onMapClick, style, clusteringOptions }, ref) => {
     const mapContainer = useRef<HTMLDivElement | null>(null);
@@ -99,7 +121,31 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
       if (!apiKey || apiKey.trim() === "") return;
       if (!mapContainer.current) return;
       if (gebetaMapsInstance.current) return;
-      gebetaMapsInstance.current = new GebetaMaps({ apiKey });
+      // Create GebetaMaps instance with transformRequest injected via options
+      const gebetaMaps = new GebetaMaps({ apiKey }) as any;
+      // Patch the init method to inject transformRequest
+      const originalInit = gebetaMaps.init.bind(gebetaMaps);
+      gebetaMaps.init = (options: any) => {
+        const styleUrl = `https://tiles.gebeta.app/styles/standard/style.json`;
+        const patchedOptions = {
+          ...options,
+          style: styleUrl,
+          attributionControl: false,
+          transformRequest: (url: string, resourceType: string) => {
+            if (url.startsWith("https://tiles.gebeta.app")) {
+              return {
+                url,
+                headers: {
+                  Authorization: `Bearer ${apiKey}`,
+                },
+              };
+            }
+            return { url };
+          },
+        };
+        return originalInit(patchedOptions);
+      };
+      gebetaMapsInstance.current = gebetaMaps;
       const map = gebetaMapsInstance.current.init({
         container: mapContainer.current,
         center: stableCenter,
@@ -108,7 +154,7 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
       });
       gebetaMapsInstance.current.addNavigationControls();
       if (stableOnMapClick) {
-        map.on("click", (e: maplibregl.MapMouseEvent) => {
+        map.on("click", (e: any) => {
           const lngLat: [number, number] = [e.lngLat.lng, e.lngLat.lat];
           stableOnMapClick(lngLat, e);
         });
@@ -120,11 +166,8 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
     }, [apiKey, stableCenter, zoom, stableOnMapClick, clusteringOptions]);
 
     if (!apiKey || apiKey.trim() === "") {
-      return (
-        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8d7da", color: "#721c24", borderRadius: 12, fontWeight: 500, fontSize: 18 }}>
-          Please provide a valid Gebeta Maps API key.
-        </div>
-      );
+      
+      return <GebetaMapError message="GebetaMap SDK is not set. Please provide a valid API key." />;
     }
 
     return (
