@@ -1,9 +1,17 @@
 {
   "name": "@gebeta/tiles",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "type": "module",
   "description": "A React SDK for integrating Gebeta Maps into your applications",
-  "keywords": ["react", "maps", "gebeta", "maplibre", "markers", "clustering", "fence-drawing"],
+  "keywords": [
+    "react",
+    "maps",
+    "gebeta",
+    "maplibre",
+    "markers",
+    "clustering",
+    "fence-drawing"
+  ],
   "author": "AfriGebeta",
   "license": "MIT",
   "repository": {
