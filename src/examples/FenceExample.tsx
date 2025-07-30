@@ -5,6 +5,8 @@ import type { GebetaMapRef, Fence } from "src/lib/GebetaMap";
 const FenceExample: React.FC = () => {
   const mapRef = useRef<GebetaMapRef>(null);
   const [_fences, setFences] = useState<Fence[]>([]);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [blockInteractions, setBlockInteractions] = useState(false);
 
   // Always call addFencePoint; FenceManager will handle start/close logic
   const handleMapClick = (lngLat: [number, number]) => {
@@ -16,6 +18,11 @@ const FenceExample: React.FC = () => {
   const handleClearFence = () => {
     mapRef.current?.clearFence();
     setFences(mapRef.current?.getFences() || []);
+  };
+
+  const handleMapLoaded = () => {
+    setIsMapLoaded(true);
+    console.log("🎉 Map has finished loading!");
   };
   
   useEffect(() => {
@@ -77,6 +84,52 @@ const FenceExample: React.FC = () => {
             You can clear the current or all fences below.
           </p>
         </div>
+
+        {/* Map Loading Status */}
+        <div style={{ 
+          padding: '12px 16px', 
+          background: isMapLoaded ? '#d4edda' : '#fff3cd', 
+          borderRadius: 8,
+          border: `1px solid ${isMapLoaded ? '#c3e6cb' : '#ffeaa7'}`,
+          color: isMapLoaded ? '#155724' : '#856404'
+        }}>
+          <strong>Map Status:</strong> {isMapLoaded ? '✅ Loaded' : '⏳ Loading...'}
+        </div>
+
+        {/* Interaction Toggle */}
+        <div style={{ 
+          padding: '12px 16px', 
+          background: blockInteractions ? '#f8d7da' : '#d1ecf1', 
+          borderRadius: 8,
+          border: `1px solid ${blockInteractions ? '#f5c6cb' : '#bee5eb'}`,
+          color: blockInteractions ? '#721c24' : '#0c5460'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <strong>Interactions:</strong>
+            <button
+              onClick={() => setBlockInteractions(!blockInteractions)}
+              style={{
+                background: blockInteractions ? '#dc3545' : '#28a745',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 4,
+                padding: '4px 12px',
+                fontSize: 12,
+                cursor: 'pointer',
+                fontWeight: 500
+              }}
+            >
+              {blockInteractions ? 'BLOCKED' : 'ENABLED'}
+            </button>
+          </div>
+          <small>
+            {blockInteractions 
+              ? 'All map interactions are disabled (pan, zoom, etc.)' 
+              : 'Map interactions are enabled'
+            }
+          </small>
+        </div>
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
           <button
             onClick={handleClearFence}
@@ -103,6 +156,8 @@ const FenceExample: React.FC = () => {
           center={[38.7685, 9.0161]}
           zoom={15}
           onMapClick={handleMapClick}
+          onMapLoaded={handleMapLoaded}
+          blockInteractions={blockInteractions}
         />
       </div>
     </div>

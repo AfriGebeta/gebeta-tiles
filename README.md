@@ -39,11 +39,12 @@ VITE_GEBETA_MAPS_API_KEY=your_gebeta_maps_api_key
 ### 2. Use the `<GebetaMap />` component
 
 ```jsx
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import GebetaMap, { GebetaMapRef } from "@gebeta/tiles";
 
 const MyMap = () => {
   const mapRef = useRef<GebetaMapRef>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   const handleMapClick = (lngLat: [number, number]) => {
     // Add a default marker
@@ -54,14 +55,22 @@ const MyMap = () => {
     }
   };
 
+  const handleMapLoaded = () => {
+    setIsMapLoaded(true);
+    console.log("Map has finished loading!");
+  };
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
+      {!isMapLoaded && <div>Loading map...</div>}
       <GebetaMap
         ref={mapRef}
         apiKey={import.meta.env.VITE_GEBETA_MAPS_API_KEY}
         center={[38.7685, 9.0161]}
         zoom={15}
         onMapClick={handleMapClick}
+        onMapLoaded={handleMapLoaded}
+        blockInteractions={false} // Set to true to disable all interactions
       />
     </div>
   );
@@ -172,6 +181,8 @@ mapRef.current?.displayRoute(route);
 | `center`            | `[number, number]`                     | Initial map center `[lng, lat]`.            |
 | `zoom`              | `number`                               | Initial zoom level.                         |
 | `onMapClick`        | `(lngLat, event) => void`              | Callback for map click events.              |
+| `onMapLoaded`       | `() => void`                           | Callback when map has finished loading.     |
+| `blockInteractions` | `boolean`                              | Disable all map interactions (pan, zoom, etc). |
 | `style`             | `React.CSSProperties`                  | Optional. Custom styles for the container.  |
 | `clusteringOptions` | `ClusteringOptions`                    | Optional. Marker clustering configuration.   |
 

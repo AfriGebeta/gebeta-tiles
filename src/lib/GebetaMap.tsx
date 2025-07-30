@@ -41,6 +41,8 @@ export interface GebetaMapProps {
   center: [number, number];
   zoom: number;
   onMapClick?: (lngLat: [number, number], event: maplibregl.MapMouseEvent) => void;
+  onMapLoaded?: () => void;
+  blockInteractions?: boolean;
   style?: React.CSSProperties;
   clusteringOptions?: ClusteringOptions;
 }
@@ -74,7 +76,7 @@ const GebetaMapError: React.FC<{ message?: string }> = ({ message }) => (
 );
 
 const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
-  ({ apiKey, center, zoom, onMapClick, style, clusteringOptions }, ref) => {
+  ({ apiKey, center, zoom, onMapClick, onMapLoaded, blockInteractions = false, style, clusteringOptions }, ref) => {
     const mapContainer = useRef<HTMLDivElement | null>(null);
     const gebetaMapsInstance = useRef<GebetaMaps | null>(null);
 
@@ -153,6 +155,24 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
         clusteringOptions,
       });
       gebetaMapsInstance.current.addNavigationControls();
+      
+      // Handle map loaded event
+      if (onMapLoaded) {
+        map.on("load", () => {
+          onMapLoaded();
+        });
+      }
+      
+      // Handle interaction blocking
+      if (blockInteractions) {
+        map.dragPan.disable();
+        map.dragRotate.disable();
+        map.scrollZoom.disable();
+        map.keyboard.disable();
+        map.doubleClickZoom.disable();
+        map.touchZoomRotate.disable();
+      }
+      
       if (stableOnMapClick) {
         map.on("click", (e: any) => {
           const lngLat: [number, number] = [e.lngLat.lng, e.lngLat.lat];
@@ -163,7 +183,7 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
         gebetaMapsInstance.current?.remove();
         gebetaMapsInstance.current = null;
       };
-    }, [apiKey, stableCenter, zoom, stableOnMapClick, clusteringOptions]);
+    }, [apiKey, stableCenter, zoom, stableOnMapClick, clusteringOptions, onMapLoaded, blockInteractions]);
 
     if (!apiKey || apiKey.trim() === "") {
       
