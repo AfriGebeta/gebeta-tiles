@@ -83,6 +83,8 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
     // Memoize center and style props internally to ensure stability
     const stableCenter = useMemo(() => center, [JSON.stringify(center)]);
     const stableStyle = useMemo(() => style, [JSON.stringify(style || {})]);
+    const stableOnMapLoaded = useMemo(() => onMapLoaded, []);
+    const stableBlockInteractions = useMemo(() => blockInteractions, [blockInteractions]);
 
     useImperativeHandle(ref, () => ({
       addImageMarker: (...args) => gebetaMapsInstance.current!.addImageMarker(...args),
@@ -157,14 +159,14 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
       gebetaMapsInstance.current.addNavigationControls();
       
       // Handle map loaded event
-      if (onMapLoaded) {
+      if (stableOnMapLoaded) {
         map.on("load", () => {
-          onMapLoaded();
+          stableOnMapLoaded();
         });
       }
       
       // Handle interaction blocking
-      if (blockInteractions) {
+      if (stableBlockInteractions) {
         map.dragPan.disable();
         map.dragRotate.disable();
         map.scrollZoom.disable();
@@ -183,7 +185,7 @@ const GebetaMapImpl = forwardRef<GebetaMapRef, GebetaMapProps>(
         gebetaMapsInstance.current?.remove();
         gebetaMapsInstance.current = null;
       };
-    }, [apiKey, stableCenter, zoom, stableOnMapClick, clusteringOptions, onMapLoaded, blockInteractions]);
+    }, [apiKey, stableCenter, zoom, stableOnMapClick, clusteringOptions, stableOnMapLoaded, stableBlockInteractions]);
 
     if (!apiKey || apiKey.trim() === "") {
       
