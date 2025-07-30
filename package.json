@@ -1,6 +1,6 @@
 {
   "name": "@gebeta/tiles",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "type": "module",
   "description": "A React SDK for integrating Gebeta Maps into your applications",
   "keywords": [
