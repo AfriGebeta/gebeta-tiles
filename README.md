@@ -68,6 +68,13 @@ const MyMap = () => {
 };
 ```
 
+**Note for TypeScript strict mode**: If you're using `verbatimModuleSyntax` or strict TypeScript settings, you may need to import types separately:
+
+```jsx
+import GebetaMap from "@gebeta/tiles";
+import type { GebetaMapRef } from "@gebeta/tiles";
+```
+
 ---
 
 ## Advanced Features
@@ -212,6 +219,12 @@ mapRef.current?.displayRoute(route);
 
 ```typescript
 import { GebetaMapRef, Fence, GebetaMapProps, MarkerData, FencePoint, ClusteringOptions } from '@gebeta/tiles';
+```
+
+**For TypeScript strict mode:**
+```typescript
+import GebetaMap from '@gebeta/tiles';
+import type { GebetaMapRef, Fence, GebetaMapProps, MarkerData, FencePoint, ClusteringOptions } from '@gebeta/tiles';
 ```
 
 ---

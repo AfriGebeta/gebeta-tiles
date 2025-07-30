@@ -5,10 +5,10 @@
 export { default as GebetaMap } from "./lib/GebetaMap.js";
 export { default } from "./lib/GebetaMap.js";
 
-// Export types as runtime values (they will be undefined at runtime but available for type checking)
-export const GebetaMapRef = undefined as any;
-export const Fence = undefined as any;
-export const GebetaMapProps = undefined as any;
-export const MarkerData = undefined as any;
-export const FencePoint = undefined as any;
-export const ClusteringOptions = undefined as any; 
+// Re-export types properly - these will be available as types for TypeScript
+export type { GebetaMapRef, GebetaMapProps, MarkerData } from "./lib/GebetaMap.js";
+export type { Fence, FencePoint } from "./lib/FenceManager.js";
+export type { ClusteringOptions } from "./lib/ClusteringManager.js";
+
+// Re-export maplibre-gl types for convenience
+export type { Map as MapLibreMap, Marker, Popup, MapMouseEvent } from "maplibre-gl"; 
