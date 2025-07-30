@@ -2,8 +2,13 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "declaration": true,
+    "declarationMap": true,
     "declarationDir": "./dist",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "module": "es2022",
+    "target": "es2020",
+    "isolatedModules": true,
+    "moduleResolution": "node"
   },
   "exclude": [
     "src/examples",

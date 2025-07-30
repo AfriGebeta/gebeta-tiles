@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GebetaMap, { GebetaMapRef, Fence } from "src/lib/GebetaMap";
 
 const FenceExample: React.FC = () => {
@@ -16,6 +16,34 @@ const FenceExample: React.FC = () => {
     mapRef.current?.clearFence();
     setFences(mapRef.current?.getFences() || []);
   };
+  
+  useEffect(() => {
+    if(!mapRef.current) return;
+    const mapInstance = mapRef.current.getMapInstance();
+    mapInstance.on('zoomend' , ()=>{
+      const bounds = mapInstance.getBounds();
+      const zoom = mapInstance.getZoom()
+      const center = mapInstance.getCenter();
+      console.log(`Zoom level: ${zoom}`);
+      console.log(`Center: [${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}]`);
+      console.log('Bounds:', {
+        ne: [bounds.getNorthEast().lat.toFixed(4), bounds.getNorthEast().lng.toFixed(4)],
+        sw: [bounds.getSouthWest().lat.toFixed(4), bounds.getSouthWest().lng.toFixed(4)]
+      });
+    })
+  
+    mapInstance.on('movestart', () => {
+      console.log("move started");
+    });
+  
+    mapInstance.on('moveend', () => {
+      console.log("move end")
+    });
+    
+    mapInstance.on('move', () => {
+        console.log('Map is being panned...');
+    });
+  }, [mapRef.current])
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative", background: "#f8fafc" }}>

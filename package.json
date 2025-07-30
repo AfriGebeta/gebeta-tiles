@@ -1,10 +1,28 @@
 {
   "name": "@gebeta/tiles",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "type": "module",
-  "main": "dist/lib/GebetaMap.js",
-  "module": "dist/lib/GebetaMap.js",
-  "types": "dist/lib/GebetaMap.d.ts",
+  "description": "A React SDK for integrating Gebeta Maps into your applications",
+  "keywords": ["react", "maps", "gebeta", "maplibre", "markers", "clustering", "fence-drawing"],
+  "author": "AfriGebeta",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AfriGebeta/gebeta-tiles.git"
+  },
+  "homepage": "https://github.com/AfriGebeta/gebeta-tiles#readme",
+  "bugs": {
+    "url": "https://github.com/AfriGebeta/gebeta-tiles/issues"
+  },
+  "main": "dist/runtime-exports.js",
+  "module": "dist/runtime-exports.js",
+  "types": "dist/runtime-exports.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/runtime-exports.js",
+      "types": "./dist/runtime-exports.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],
