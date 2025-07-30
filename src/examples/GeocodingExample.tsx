@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
-import GebetaMap, { GebetaMapRef } from "src/lib/GebetaMap";
+import GebetaMap from "src/lib/GebetaMap";
+import type { GebetaMapRef } from "src/lib/GebetaMap";
 
 const MARKER_ICON = "https://cdn-icons-png.flaticon.com/512/484/484167.png";
 

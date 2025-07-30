@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
-import GebetaMap, { GebetaMapRef } from "src/lib/GebetaMap";
-import type { ClusteredMarkerData } from "src/lib/ClusteringManager";
+import React, { useRef, useState, useEffect } from "react";
+import GebetaMap from "src/lib/GebetaMap";
+import type { GebetaMapRef } from "src/lib/GebetaMap";
+import type { ClusteringOptions, ClusteredMarkerData } from "src/lib/ClusteringManager";
 
 const randomLngLat = (): [number, number] => [
   38.76 + Math.random() * 0.03,
@@ -18,7 +19,7 @@ const CLUSTER_MARKER_IMAGES = [
 const DEFAULT_CLUSTER_IMAGE = "https://cdn-icons-png.flaticon.com/512/616/616408.png";
 
 // Static clustering options (do not change after mount)
-const CLUSTERING_OPTIONS = {
+const CLUSTERING_OPTIONS: ClusteringOptions = {
   enabled: false,
   showClusterCount: true,
   clusterImage: DEFAULT_CLUSTER_IMAGE,

@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
-import GebetaMap, { GebetaMapRef } from "src/lib/GebetaMap";
+import GebetaMap from "src/lib/GebetaMap";
+import type { GebetaMapRef } from "src/lib/GebetaMap";
 
 // Helper to extract [lng, lat] from any object
 function getLatLng(item: any): [number, number] | null {

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import GebetaMap, { GebetaMapRef, Fence } from "src/lib/GebetaMap";
+import GebetaMap from "src/lib/GebetaMap";
+import type { GebetaMapRef, Fence } from "src/lib/GebetaMap";
 
 const FenceExample: React.FC = () => {
   const mapRef = useRef<GebetaMapRef>(null);
