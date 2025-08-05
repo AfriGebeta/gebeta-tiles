@@ -120,6 +120,7 @@ class FenceManager {
   /** Close the current fence if it has at least 3 points. */
   public closeFence() {
     if (this.fencePoints.length < 3) return;
+    this.fencePoints.push(this.fencePoints[0]);
     this.drawFence();
     this.stopFenceDrawing();
   }
