@@ -51,7 +51,8 @@ class FenceManager {
     if (this.isFenceCompleted() && !this.isPointInsideFence(lngLat)) {
       this.startNewFence();
     }
-    if (this._isDrawingFence && this.isClickOnExistingFencePoint(lngLat)) {
+    // this.isClickOnExistingFencePoint
+    if (this._isDrawingFence && this.isClickOnStartingFencePoint(lngLat)) {
       this.closeFence();
       return;
     }
@@ -255,6 +256,16 @@ class FenceManager {
       }
     }
     return false;
+  }
+
+  public isClickOnStartingFencePoint(lngLat: FencePoint) {
+    if (this.fencePoints.length == 0) return;
+    const point = this.fencePoints[0]
+    const distance = this.calculateDistance(lngLat, point);
+    if (distance < 0.0005) {
+      return true;
+    }
+    return false
   }
 
   private calculateDistance(point1: FencePoint, point2: FencePoint) {
